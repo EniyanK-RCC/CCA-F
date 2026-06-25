@@ -74,12 +74,12 @@ export class MockLanguageModel implements LanguageModelV1 {
       componentName = "Card";
     }
 
-    // Step 1: Create component file
-    if (toolMessageCount === 1) {
-      const text = `I'll create a ${componentName} component for you.`;
+    // Step 1: Create component file first
+    if (toolMessageCount === 0) {
+      const text = `This is a static response. You can place an Anthropic API key in the .env file to use the Anthropic API for component generation. Let me create a ${componentName} component.`;
       for (const char of text) {
         yield { type: "text-delta", textDelta: char };
-        await this.delay(25);
+        await this.delay(15);
       }
 
       yield {
@@ -105,9 +105,9 @@ export class MockLanguageModel implements LanguageModelV1 {
       return;
     }
 
-    // Step 2: Enhance component
-    if (toolMessageCount === 2) {
-      const text = `Now let me enhance the component with better styling.`;
+    // Step 2: Create App.jsx (component already exists so the import resolves)
+    if (toolMessageCount === 1) {
+      const text = `Now let me create App.jsx to display the component.`;
       for (const char of text) {
         yield { type: "text-delta", textDelta: char };
         await this.delay(25);
@@ -119,10 +119,9 @@ export class MockLanguageModel implements LanguageModelV1 {
         toolCallId: `call_2`,
         toolName: "str_replace_editor",
         args: JSON.stringify({
-          command: "str_replace",
-          path: `/components/${componentName}.jsx`,
-          old_str: this.getOldStringForReplace(componentType),
-          new_str: this.getNewStringForReplace(componentType),
+          command: "create",
+          path: "/App.jsx",
+          file_text: this.getAppCode(componentName),
         }),
       };
 
@@ -137,12 +136,12 @@ export class MockLanguageModel implements LanguageModelV1 {
       return;
     }
 
-    // Step 3: Create App.jsx
-    if (toolMessageCount === 0) {
-      const text = `This is a static response. You can place an Anthropic API key in the .env file to use the Anthropic API for component generation. Let me create an App.jsx file to display the component.`;
+    // Step 3: Enhance component
+    if (toolMessageCount === 2) {
+      const text = `Now let me enhance the component with better styling.`;
       for (const char of text) {
         yield { type: "text-delta", textDelta: char };
-        await this.delay(15);
+        await this.delay(25);
       }
 
       yield {
@@ -151,9 +150,10 @@ export class MockLanguageModel implements LanguageModelV1 {
         toolCallId: `call_3`,
         toolName: "str_replace_editor",
         args: JSON.stringify({
-          command: "create",
-          path: "/App.jsx",
-          file_text: this.getAppCode(componentName),
+          command: "str_replace",
+          path: `/components/${componentName}.jsx`,
+          old_str: this.getOldStringForReplace(componentType),
+          new_str: this.getNewStringForReplace(componentType),
         }),
       };
 
@@ -320,17 +320,9 @@ export default Card;`;
 const Counter = () => {
   const [count, setCount] = useState(0);
 
-  const increment = () => {
-    setCount(count + 1);
-  };
-
-  const decrement = () => {
-    setCount(count - 1);
-  };
-
-  const reset = () => {
-    setCount(0);
-  };
+  const increment = () => setCount(count + 1);
+  const decrement = () => setCount(count - 1);
+  const reset = () => setCount(0);
 
   return (
     <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow-md">

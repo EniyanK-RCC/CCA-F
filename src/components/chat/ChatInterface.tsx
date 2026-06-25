@@ -9,7 +9,7 @@ import { useChat } from "@/lib/contexts/chat-context";
 
 export function ChatInterface() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const { messages, input, handleInputChange, handleSubmit, status } = useChat();
+  const { messages, input, handleInputChange, handleSubmit, status, error } = useChat();
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -39,6 +39,11 @@ export function ChatInterface() {
             <MessageList messages={messages} isLoading={status === "streaming"} />
           </div>
         </ScrollArea>
+      )}
+      {error && (
+        <div className="mx-4 mb-2 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+          Something went wrong: {error.message || "Failed to generate component. Please try again."}
+        </div>
       )}
       <div className="mt-4 flex-shrink-0">
         <MessageInput
