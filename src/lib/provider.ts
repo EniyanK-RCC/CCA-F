@@ -75,7 +75,7 @@ export class MockLanguageModel implements LanguageModelV1 {
     }
 
     // Step 1: Create component file
-    if (toolMessageCount === 1) {
+    if (toolMessageCount === 0) {
       const text = `I'll create a ${componentName} component for you.`;
       for (const char of text) {
         yield { type: "text-delta", textDelta: char };
@@ -106,7 +106,7 @@ export class MockLanguageModel implements LanguageModelV1 {
     }
 
     // Step 2: Enhance component
-    if (toolMessageCount === 2) {
+    if (toolMessageCount === 1) {
       const text = `Now let me enhance the component with better styling.`;
       for (const char of text) {
         yield { type: "text-delta", textDelta: char };
@@ -138,7 +138,7 @@ export class MockLanguageModel implements LanguageModelV1 {
     }
 
     // Step 3: Create App.jsx
-    if (toolMessageCount === 0) {
+    if (toolMessageCount === 2) {
       const text = `This is a static response. You can place an Anthropic API key in the .env file to use the Anthropic API for component generation. Let me create an App.jsx file to display the component.`;
       for (const char of text) {
         yield { type: "text-delta", textDelta: char };
@@ -320,17 +320,9 @@ export default Card;`;
 const Counter = () => {
   const [count, setCount] = useState(0);
 
-  const increment = () => {
-    setCount(count + 1);
-  };
-
-  const decrement = () => {
-    setCount(count - 1);
-  };
-
-  const reset = () => {
-    setCount(0);
-  };
+  const increment = () => setCount(count + 1);
+  const decrement = () => setCount(count - 1);
+  const reset = () => setCount(0);
 
   return (
     <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow-md">
